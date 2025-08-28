@@ -5,7 +5,7 @@ Fully frontend tester for the web.
 
 
 Usage:
-Just change the question array with your own an Use as you wish.
+Just change the question array with your own questions and answers.
 The structure needs to be like this:
 [["Q1" , index of right answer , ["A0","A1" .... ]], ["Q2" , index of right answer , ["A0","A1" .... ]], .... ]
 
