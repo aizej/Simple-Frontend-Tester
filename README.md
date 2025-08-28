@@ -1,5 +1,6 @@
-# Simple-Frontend-Tester
-Fully frontend tester for the web.
+# Simple-Frontend-Test
+Fully frontend test for your website.
+Try it out: https://letecka-skola-vysocina.cz/test-pro-ull-piloty/
 <img width="796" height="856" alt="Screenshot_2025-08-28_13_52_45" src="https://github.com/user-attachments/assets/1ad10170-080c-422a-b927-8bbfdccb31cb" />
 
 
