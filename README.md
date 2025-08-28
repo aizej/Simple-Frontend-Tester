@@ -1,2 +1,414 @@
 # Simple-Frontend-Tester
 Fully frontend tester for the web.
+
+
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --muted: #475569;
+      --accent: #0b74de;
+      --ok: #16a34a;
+      --bad: #dc2626;
+      --text: #0f172a;
+      --radius: 8px;
+    }
+/*
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-size: 18px;
+      color: var(--text)
+    }
+    
+    body {
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px
+    }*/
+
+    .wrap {
+      width: 100%;
+      max-width: 960px
+    }
+
+    .card {
+      background: var(--card);
+      padding: 24px;
+      border-radius: var(--radius);
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+      border: 1px solid rgba(15, 23, 42, 0.04)
+    }
+
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 24px
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+      align-items: center
+    }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px
+    }
+
+    button.ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid rgba(15, 23, 42, 0.06)
+    }
+
+    .question-area {
+      margin-top: 12px
+    }
+
+    .qbox {
+      padding: 18px;
+      border-radius: 10px;
+      border: 1px solid rgba(15, 23, 42, 0.04)
+    }
+
+    #qtext {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 8px
+    }
+
+    .answers {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .answer {
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      cursor: pointer;
+      font-size: 17px;
+      background: #fbfdff
+    }
+
+    .answer.selected {
+      outline: 3px solid rgba(11, 116, 222, 0.12)
+    }
+
+    .progress {
+      height: 16px;
+      background: rgba(15, 23, 42, 0.04);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 14px
+    }
+
+    .progress>i {
+      display: block;
+      height: 100%;
+      background: var(--accent);
+      width: 0%
+    }
+
+    .small {
+      font-size: 15px;
+      color: var(--muted)
+    }
+
+    .results {
+      margin-top: 16px
+    }
+
+    .result-list {
+      margin-top: 12px;
+      max-height: 420px;
+      overflow: auto;
+      padding-right: 8px
+    }
+
+    .res-item {
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      background: #fff;
+      border: 1px solid rgba(15, 23, 42, 0.04);
+      display: flex;
+      flex-direction: column
+    }
+
+    .res-item h4 {
+      margin: 0 0 8px 0;
+      font-size: 16px
+    }
+
+    .flex {
+      display: flex;
+      gap: 12px;
+      align-items: center
+    }
+
+    .spacer {
+      flex: 1
+    }
+
+    /* NEW: visual feedback styles */
+    .res-item.correct {
+      border-left: 6px solid var(--ok);
+      background: linear-gradient(90deg, rgba(22, 163, 74, 0.04), transparent);
+    }
+
+    .res-item.incorrect {
+      border-left: 6px solid var(--bad);
+      background: linear-gradient(90deg, rgba(220, 38, 38, 0.03), transparent);
+    }
+
+    .answer-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px
+    }
+
+    .answer-chip {
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(15, 23, 42, 0.04);
+      background: #fbfdff;
+      font-size: 15px;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .answer-chip.muted {
+      color: var(--muted);
+      opacity: 0.9
+    }
+
+    .answer-chip.correct {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.16);
+      font-weight: 600;
+    }
+
+    .answer-chip.correct::before {
+      content: "✓";
+      display: inline-block;
+      margin-right: 6px;
+      color: var(--ok);
+      font-weight: 700
+    }
+
+    .answer-chip.wrong {
+      color: var(--bad);
+      text-decoration: line-through;
+      border-color: rgba(220, 38, 38, 0.12)
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700
+    }
+
+    .badge.ok {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--ok);
+      border: 1px solid rgba(16, 185, 129, 0.12)
+    }
+
+    .badge.bad {
+      background: rgba(220, 38, 38, 0.08);
+      color: var(--bad);
+      border: 1px solid rgba(220, 38, 38, 0.08)
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="controls">
+        <button id="startBtn">Začít</button>
+        <button id="stopBtn" class="ghost">Zobrazit Výsledek</button>
+        <button id="resumeBtn" class="ghost">Pokračovat</button>
+        <button id="restartBtn" class="ghost">Začít Znovu</button>
+        <div class="spacer"></div>
+        <div class="small">Cíl: <strong id="target">95%</strong></div>
+      </div>
+
+      <div class="question-area">
+        <div id="questionCard" class="qbox">
+          <div id="qmeta" class="small"></div>
+          <div id="qtext">Klikněte na Začít</div>
+          <div class="answers" id="answers"></div>
+
+          <div class="flex" style="margin-top:12px">
+            <div class="small">Progress <span id="progressText">0 / 0</span></div>
+            <div class="spacer"></div>
+            <button id="prevBtn" class="ghost">Předchozí</button>
+            <button id="nextBtn">Další</button>
+          </div>
+          <div class="progress" aria-hidden><i id="progressBar"></i></div>
+        </div>
+
+        <div id="results" class="results" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // QUESTIONS: replace with your array: [ ["Q", correctIndex(0-based), ["A","B","C"] ], ... ]
+    const QUESTIONS = [["test_question 1:",3,["A0","A1","A2","A3"]],["test_question 2:",0,["A0","A1","A2","A3"]]]
+    let state = { order: [], answers: {}, pos: 0, started: false };
+    const STORAGE_KEY = 'simple_mcq_test_v1';
+    const TARGET = 95;
+
+    function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]] } return array }
+
+    const startBtn = document.getElementById('startBtn'), stopBtn = document.getElementById('stopBtn'), resumeBtn = document.getElementById('resumeBtn'), restartBtn = document.getElementById('restartBtn');
+    const qtext = document.getElementById('qtext'), qmeta = document.getElementById('qmeta'), answersEl = document.getElementById('answers');
+    const prevBtn = document.getElementById('prevBtn'), nextBtn = document.getElementById('nextBtn');
+    const progressBar = document.getElementById('progressBar'), progressText = document.getElementById('progressText');
+    const resultsEl = document.getElementById('results');
+
+    function init() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      resumeBtn.style.display = saved ? 'inline-block' : 'none';
+      updateProgressUI();
+      renderQuestion();
+    }
+
+    function startTest(resume = false) {
+      if (!resume) { state.order = shuffle(Array.from({ length: QUESTIONS.length }, (_, i) => i)); state.answers = {}; state.pos = 0; state.started = true }
+      else { const s = localStorage.getItem(STORAGE_KEY); if (s) state = JSON.parse(s); else return }
+      saveState(); renderQuestion(); resultsEl.style.display = 'none';
+    }
+
+    function renderQuestion() {
+      const total = state.order.length || QUESTIONS.length; if (total === 0) { qmeta.textContent = ''; qtext.textContent = 'No questions'; answersEl.innerHTML = ''; return }
+      const qidx = state.order[state.pos]; const q = QUESTIONS[qidx]; qmeta.textContent = `Question ${state.pos + 1} of ${total}`; qtext.textContent = q[0] || ''; answersEl.innerHTML = '';
+      const chosen = state.answers[qidx];
+      q[2].forEach((a, i) => {
+        const div = document.createElement('div'); div.className = 'answer' + (chosen === i ? ' selected' : ''); div.tabIndex = 0; div.innerHTML = `${String.fromCharCode(65 + i)}. ${a}`;
+        div.onclick = () => { state.answers[qidx] = i; saveState(); renderQuestion() };
+        div.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { state.answers[qidx] = i; saveState(); renderQuestion(); } };
+        answersEl.appendChild(div);
+      });
+      updateProgressUI();
+    }
+
+    function nextQuestion() { if (state.pos < state.order.length - 1) state.pos++; saveState(); renderQuestion(); }
+    function prevQuestion() { if (state.pos > 0) state.pos--; saveState(); renderQuestion(); }
+
+    function computeAndShowResults() {
+      const keys = Object.keys(state.answers).map(k => parseInt(k)); const answered = keys.length; if (answered === 0) return alert('No answers');
+      let correct = 0; const report = keys.map(qidx => { const q = QUESTIONS[qidx]; const chosen = state.answers[qidx]; const ok = chosen === q[1]; if (ok) correct++; return { qidx, text: q[0], chosen, correctIndex: q[1], answers: q[2], ok } });
+      const percent = Math.round((correct / answered) * 10000) / 100;
+      resultsEl.style.display = 'block'; resultsEl.innerHTML = '';
+      // Header summary
+      resultsEl.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>Results</strong><div class="small">Answered ${answered} of ${QUESTIONS.length}</div></div><div style="text-align:right"><div style="font-size:22px">${percent}%</div><div class="small">${correct} / ${answered}</div></div></div>`;
+      const targetNote = document.createElement('div'); targetNote.className = 'small'; targetNote.style.marginTop = '8px'; targetNote.textContent = percent >= TARGET ? 'Target reached' : 'Target not reached'; resultsEl.appendChild(targetNote);
+
+      // List each question with visual cues
+      const list = document.createElement('div'); list.className = 'result-list';
+      report.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'res-item ' + (r.ok ? 'correct' : 'incorrect');
+
+        // top row: question title + badge
+        const topRow = document.createElement('div');
+        topRow.className = 'meta-row';
+        const h = document.createElement('h4'); h.textContent = r.text;
+        topRow.appendChild(h);
+
+        const badge = document.createElement('div');
+        badge.innerHTML = r.ok ? `<span class="badge ok">Correct</span>` : `<span class="badge bad">Wrong</span>`;
+        topRow.appendChild(badge);
+        div.appendChild(topRow);
+
+        // detailed answers list
+        const aList = document.createElement('div'); aList.className = 'answer-list';
+
+        r.answers.forEach((ans, idx) => {
+          const chip = document.createElement('div');
+          // choose styling
+          if (idx === r.correctIndex && idx === r.chosen) {
+            // chosen and correct
+            chip.className = 'answer-chip correct';
+            chip.textContent = `${String.fromCharCode(65 + idx)}. ${ans}`;
+          } else if (idx === r.correctIndex) {
+            // correct (but not chosen)
+            chip.className = 'answer-chip correct';
+            chip.textContent = `${String.fromCharCode(65 + idx)}. ${ans}`;
+          } else if (idx === r.chosen && idx !== r.correctIndex) {
+            // chosen but wrong
+            chip.className = 'answer-chip wrong';
+            chip.textContent = `${String.fromCharCode(65 + idx)}. ${ans}`;
+          } else {
+            chip.className = 'answer-chip muted';
+            chip.textContent = `${String.fromCharCode(65 + idx)}. ${ans}`;
+          }
+          aList.appendChild(chip);
+        });
+
+        // quick text summary for accessibility / clarity
+        const summary = document.createElement('div'); summary.className = 'small';
+        const userText = r.chosen !== undefined ? r.answers[r.chosen] : '-';
+        const correctText = r.answers[r.correctIndex];
+        summary.innerHTML = `Your answer: <strong>${userText}</strong> — Correct answer: <strong>${correctText}</strong>`;
+        summary.style.marginTop = '8px';
+
+        div.appendChild(aList);
+        div.appendChild(summary);
+        list.appendChild(div);
+      });
+
+      resultsEl.appendChild(list);
+    }
+
+    function updateProgressUI() { const total = state.order.length || QUESTIONS.length; const answered = Object.keys(state.answers).length; progressText.textContent = `${answered} / ${total}`; const pct = total ? Math.round((answered / total) * 100) : 0; progressBar.style.width = pct + '%'; }
+
+    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); resumeBtn.style.display = 'inline-block'; updateProgressUI(); }
+    function clearState() { localStorage.removeItem(STORAGE_KEY); state = { order: [], answers: {}, pos: 0, started: false }; init(); }
+
+    startBtn.onclick = () => startTest(false); resumeBtn.onclick = () => startTest(true); stopBtn.onclick = () => computeAndShowResults(); restartBtn.onclick = () => clearState(); nextBtn.onclick = () => nextQuestion(); prevBtn.onclick = () => prevQuestion();
+
+    document.addEventListener('keydown', (e) => { if (!state.started) return; if (e.key === 'n' || e.key === 'ArrowRight') nextQuestion(); if (e.key === 'p' || e.key === 'ArrowLeft') prevQuestion(); });
+
+    init(); renderQuestion();
+  </script>
+</body>
+
+</html>
