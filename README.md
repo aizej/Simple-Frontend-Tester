@@ -1,9 +1,6 @@
 # Simple-Frontend-Tester
 Fully frontend tester for the web.
-
-
-
-<!doctype html>
+<pre> ```<!doctype html>
 <html lang="en">
 
 <head>
@@ -411,4 +408,4 @@ Fully frontend tester for the web.
   </script>
 </body>
 
-</html>
+</html>``` </pre>
